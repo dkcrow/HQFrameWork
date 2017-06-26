@@ -1,0 +1,338 @@
+PVPSDK
+
+v0.2.11 2017-05-19
+
+- 增加 pingpong 网络数据反馈接口， PVPGlobal.
+- 增加日志监控
+
+
+v0.2.10-p1 2017-02-27
+
+- 优化网络
+
+v0.2.10 2017-02-15
+
+- 增加平台
+
+v0.2.9 2017-01-22
+
+- 支持ipv6
+
+v0.2.8-p3 2017-01-10
+
+- 处理ios 存储文件路径bug
+
+v0.2.8-P2 2016-12-21
+
+- 接收包增加长度限制
+
+v0.2.8-P1 2016-12-16
+
+- 优化数据包处理
+
+
+v0.2.8 2016-12-15
+
+- 增强安全验证
+
+v0.2.7-P1 2016-12-14
+
+- 处理Room 没有 roundServerTime 和 serverTime 的bug
+
+v0.2.7 2016-12-01
+
+- 调整了网络逻辑
+
+v0.2.6-P1 2016-11-10
+
+- PVPGLobal.lastLoginSuccessTime 取登陆时间
+
+V0.2.6 2016-11-01
+
+- 提供google play 支付验证， Payment.Payment(string inAppPurchaseData, string inAppDataSignature); 上线前需要向服务器平台提供 google play in app purchase 的 public key，并且不要在游戏客户端存放 google play in app purchase 的 public key。
+- 转https
+
+
+V0.2.5-P2 2016-10-11
+
+- player.cs 增加 avatar 字段
+
+
+V0.2.5-P1 2016-09-19
+
+- fix a bug: socialCancelChallengeResponse 回调错误
+
+
+V0.2.5 2016-09-17
+
+- 完善邀请对战的SDK，
+
+相关的操作包括
+  
+  // 提交邀请对战申请
+  // 参数一是大厅编号，参数二是好友对手的playerId
+  PVPSdk.Social.OpSubmitChallenge(int lobbyId, UInt64 challengePlayerId)
+
+  // 接收到对手的邀请信息后，进行同意或者拒绝操作
+  PVPSdk.Social.OpTakeUpChallenge(string key, bool isTakeUped)
+
+  // 发出对战邀请或者同意对方的邀请对战申请后，取消已经存在的申请
+  PVPSdk.Social.OpCancelChallenge(string key)
+
+
+提供绑定的委托包括：
+
+  // PVPSdk.Social.OpSubmitChallenge 操作后的回报，告诉是否发送申请成功
+  PVPSdk.PVP.HandlerRegister.socialSubmitChallengeResponseHandler;
+
+  // 当对方向我方发送了对战申请，我方接收到的广播消息
+  PVPSdk.PVP.HandlerRegister.socialReceivedChallengeBroadcastHandler;
+
+  // 当我方同意或者拒绝申请，PVPSdk.Social.OpTakeUpChallenge 操作后的回报，如果操作后双方都同意了对战邀请，那么双方会收到 PVPSdk.PVP.HandlerRegister.socialTakeUpChallengeFinishedBroadcastHandler 广播
+  PVPSdk.PVP.HandlerRegister.socialTakeUpChallengeResponseHandler;
+
+  // 当双方都同意了对战邀请，双方都会收到 PVPSdk.PVP.HandlerRegister.socialTakeUpChallengeFinishedBroadcastHandler 广播，服务器会创建好房间，通过PVPSdk.room 可以获取最新房间的信息
+  // 如果有一方拒绝了邀请，那么另一方也会收到  PVPSdk.PVP.HandlerRegister.socialTakeUpChallengeFinishedBroadcastHandler，errorCode == errorcode.SOCIAL_REFUSE_CHALLENGE
+  PVPSdk.PVP.HandlerRegister.socialTakeUpChallengeFinishedBroadcastHandler;
+
+  // 当我方调用 PVPSdk.Social.OpCancelChallenge操作后，会收到 PVPSdk.PVP.HandlerRegister.socialCancelChallengeResponse
+  PVPSdk.PVP.HandlerRegister.socialCancelChallengeResponse;
+
+  // 当对方调用 PVPSdk.Social.OpCancelChallenge操作后，我方会收到 PVPSdk.PVP.HandlerRegister.socialCancelChallengeResponse
+  PVPSdk.PVP.HandlerRegister.socialOtherCancelChallengeBroadcastHandler;
+
+- 修复了排行榜列表好友列别数据错误的bug。
+
+
+V0.2.4-P2 2016-09-02
+
+- AppPlayerInfo 返回值增加 loginType
+- SocialFriend 增加 playerInfoAccessToken
+
+
+V0.2.4-P1 2016-08-31
+
+- Leaderboard.OpLeaderboardGetList 增加int offset, int length 参数，offset 表示偏移量，length 表示长度，最大值 20
+
+返回值会返回下一个偏移量，nextOffset,如果nextOffset > 0,那么可以继续做分页操作 
+
+V0.2.4  2016-08-30
+
+- 增加通过player_info_access_token获取玩家应用自定义信息功能。
+- 在排行榜中可以获取玩家的player_info_access_token，然后通过Social.OpGetAppInfo方法发出获取指定用户信息的请求，请求相应于回调方法Handler.SocialGetAppInfoHandler。
+
+V0.2.3  2016-07-27
+
+- 增加添加好友成功或者失败时，回调 Handler.SocialAcceptFriendBroadcastHandler
+- AppPlayerInfo, 默认等级 level 1
+
+
+V0.2.2  2016-07-22
+
+- 匹配对手增加versionId 字段，默认0，限定versionId 相同的可以匹配
+
+V0.2.1  2016-07-20
+
+- 增加 LOBBY_MATCH_OPPONENT_ALREADY_IN_ROOM 错误码，匹配时如果玩家已经在房间里面（或者说玩家还没有离开之前的房间），那么就直接返回 LOBBY_MATCH_OPPONENT_ALREADY_IN_ROOM 错误码已经已有房间的信息。
+
+只有玩家调用 Room.OpLeaveRoom 离开房间或者玩家超时，服务器自动踢掉玩家，才能进行下次匹配。
+
+
+V0.2.0-P3.1 2016-07-05
+
+- int64 score -> int32 score
+
+
+V0.2.0-P3 2016-07-05
+
+- int64 score -> int32 score
+
+
+V0.2.0-P2 2016-07-05
+
+- AppPlayerInfo 增加 countryCode 字段
+
+V0.2.0-P1 2016-06-23
+
+- fix random_sequence uint32 -> uint64
+
+V0.2.0 2016-06-23
+
+- 使用playerId 字段标示用户，增加facebook 和 游客的绑定功能
+
+
+V0.1.19-P4 2016-06-23
+
+- 优化网络层，修改 User::OpConnectGameServer() 返回值，
+  public enum ConnectServerOptionalResult{
+        NeedLogin = 1,
+        StartConnect = 2,
+
+        /// <summary>
+        /// 正在连接
+        /// </summary>
+        ConnectingOrChecking = 3,
+
+        /// <summary>
+        /// 连接成功并且验证通过
+        /// </summary>
+        Checked = 4,
+    }
+
+    四个返回值，返回 NeedLogin 表示需要进行用户登录，
+              返回 StartConnect 或者 ConnectingOrChecking 表示正在连接，需要等待
+              返回 Checked 表示连接已经连接成功，可以进行下一步业务操作
+
+>>>>>>> V0.1.19-P4
+
+V0.1.19-P3 2016-06-01
+- LeaderboardMemberinfo 增加 countryCode， level， winTimes， loseTimes 字段
+
+
+V0.1.19-P2 2016-05-26
+- leaderboard 排行榜 增加 TimeDimension ThisWeek = 3
+
+V0.1.19-P1 2016-05-26
+- fix a bug, Leaderboard_SubmitScore_Response = 403 => Leaderboard_SubmitScore_Response = 404
+
+V0.1.19 2016-05-26
+- 修改匹配对战函数参数，去掉原来的range 参数，增加rangeDown, rangeUp 参数，-1 表示没有限制，其他表示具体限制，例如 rangDown 10, rangeUp 20, 表示匹配在范围在 10 至 20 之间的对手
+
+V0.1.18 2016-05-23
+
+- 修改网络超时处理，去掉本地回报超时检测，优化网络超时检查
+
+V0.1.17 2016-05-16
+
+- 修改客户端登陆流程，增加自动登陆，先调用自动登录，如果自动登录失败，再调用手动登录（用户选择登录方式，facebook 或者 游客）
+  if (!PVPSdk.User.OpAutoLogin ()) {
+        PVPSdk.User.OpLoginOrRegister (PVPSdk.PVP.LoginType.Guest);
+  }
+
+V0.1.10 2016-04-25
+
+- 增加心跳回报检测
+
+V0.1.9 2016-03-31
+
+- 新测试服
+
+V0.1.8 2016-02-01
+
+- OpMatchOpponentWithLobbyId(int lobbyId, int standard, int range = -1, int waitForMatch=0, int clusterId=0, float timeout = 5)
+  增加参数 waitForMatch 和 clusterId， 
+  waitForMatch 等待匹配时间，默认 0 ，表示永久等待
+  clusterId    匹配对象分类，默认0，表示不区分匹配的对象，例如游戏中需要匹配男女角色，限制男女匹配，不允许男男 女女匹配，那么可以设置 1表示南男，2 表示女。匹配时就只会匹配男女
+
+  修改了参数 range，默认 -1，表示不针对standard 进行范围限制。如果是0，那么standard 必须一致。
+
+- 增加了 LOBBY_MATCH_OPPONENT_TIMEOUT = 203; 错误码，当匹配超时时，会返回 LOBBY_MATCH_OPPONENT_TIMEOUT；
+
+
+V0.1.7 2016-01-26
+
+- Room.OpUpdateRoomCustomData 增加 updateServerTime 参数，0 ：表示不更新 1：表示更新。服务器会保留Room 的一个服务器时间（可以看做回合开始时间），由updateServerTime 控制是否更新
+  同时Room class 增加 roundServerTime 和 serverTime, roundServerTime 表示回合开始时间，serverTime 表示服务器当前时间。
+
+V0.1.6-P2 2016-01-20
+
+- 优化网络状态监控
+
+V0.1.6-P1 2016-01-19
+
+- 修复超时回调，“更新房间信息的请求”回调错误的问题
+
+V0.1.6 2016-01-15
+
+- 优化了网络层数据处理，修复接收数据报出错问题 
+
+V0.1.5-p4 2015-12-28
+
+- PVPSdk 网络长连接重连，修复了客户端房间信息没有清除的bug。
+
+V0.1.5-P3 2015-11-12
+
+- PVPSdk.Lobby 增加静态方法 OpMatchOpponentWithLobbyId(int lobbyId, int standard, int range = 0, float timeout = 5)， 可以在没有进入大厅时直接传入大厅 id（LobbyId）,
+  并进行匹配，减少接口调用和客户端开发量。
+
+V0.1.5-P2 2015-11-11
+
+- 客户端发送到服务器的数据包增加了校验字段
+- 增加了“检验 gameServer token” 超时回调
+
+V0.1.5-P1 2015-11-10
+
+- 房间内用户信息类，PVP.Room.Member 增加isLeave 成员变量，玩家离开房间后，玩家在房间内的数据部删除，而是把 PVP.Room.Member.isLeave 置为 True。
+
+V0.1.5 2015-11-09
+
+- 增加了 HandlerRegister.otherConnectionJitterBroadcastHandler 和 HandlerRegister.otherConnectingRecoveryBroadcastHandler 委托实例，
+  HandlerRegister.otherLoseConnectionBroadcastHandler 改名为 HandlerRegister.otherConnectionLosedBroadcastHandler
+
+  在同一房间内，其他玩家的网络状况有三种情况：1、其他玩家网络异常（服务器保留玩家的在线信息） 2、其他玩家网络恢复 3、其他玩家网络断线了（服务器清除了玩家的在线信息）。
+  在这三种情况，系统会自动回调 HandlerRegister.otherConnectionJitterBroadcastHandler 、HandlerRegister.otherConnectingRecoveryBroadcastHandler 和 
+  HandlerRegister.otherConnectionLosedBroadcastHandler 三个委托实例，
+  强烈建议客户端业务层处理 HandlerRegister.otherConnectionLosedBroadcastHandler 委托实例，其他两个委托实例，客户端可以根据需要自行处理。
+
+
+V0.1.4-P5 2015-11-05
+
+- 修改了匹配对手算法
+  客户端调用 PVPGlobal.lobby.OpMatchOppenent 方法，服务器接收到请求后，系统会回调 HandlerRegister.roomMatchOpponentResponseHandler 委托实例，告知是否提交“匹配对手”请求成功。
+  提交请求成功，会同时返回是否“匹配对手成功”：
+    1、如果成功，会把房间信息以及玩家信息一并返回，客户端可以通过 PVPGlobal.room 以及 PVPGlobal.appUserInfos 获取房间信息和对手信息
+    2、如果没有足够的玩家，会反馈已经匹配成功部分的玩家信息。客户端需要等待，当足够的玩家出现，系统会回调 HandlerRegister.roomMatchOpponentFinishedBroadcastHandler 委托实例
+
+  如果房间玩家人数大于2，那么会出现中途增加人数，或者已经匹配的玩家离场的情况，这时系统会回调 HandlerRegister.roomMatchOpponentBroadcastHandler 委托实例。根据应用场景，开发者可以处理或者忽略这个回调。
+
+V0.1.4-P4 2015-11-03
+
+- Room.OpSendNewMessage 请求，增加 HandlerRegister.roomNewMessageResponseHandler 委托实例，发送消息后，玩家也会收到发回给自己的回复
+
+V0.1.4-P3 2015-11-02
+
+- fix 一方 OpSendNewMessage， 其他玩家没有收到广播的bug
+
+V0.1.4-P2 2015-11-02
+
+- LocalAppUser.OpUpdateAppUserInfo 以及 LocalAppUser.OpUpdateAppUserCustomData 方法增加 int commandId 参数（commandId 的值表示的含义由开发者自行定义），开发者在更新用户信息时，例如更新用户的在游戏中的彩币数量，可以定义 commandId = 1（表示更新彩币数量），并调用LocalAppUser.OpUpdateAppUserInfo 或者 LocalAppUser.OpUpdateAppUserCustomData。在服务器响应更新请求后，会原样返回 commandId，开发者可以根据 errorCode 以及 commandId 判断进了了什么更新以及是否更新成功。
+- Room.OpUpdateRoomCustomData 以及 Room.OpUpdateMemberCustomData 方法增加 int commandId 参数（commandId 的值表示的含义由开发者自行定义）,在房间内开发者更新用户信息或者房间信息，可以传递commandId ，服务器响应请求后会原样返回 commandId。 例如在扑克牌比赛中，开发者定义 commandId =1 表示出牌操作，一方出牌，其他玩家接收到广播通知，根据commandId == 1，判断玩家出牌了。
+
+
+V0.1.4-P1 2015-10-30
+
+- fix 离开大厅没有通知房间内其他玩家 Bug
+- 单个玩家离开房间不强制删除房间
+- fix http协议请求结果网络异常时没有正确返回errorCode Bug
+
+V0.1.4 2015-10-29
+
+- LocalAppUserInfo 类增加 上传分数 OpLeaderboardSubmitScore 以及获取排行榜 OpLeaderboardGetList 两个接口
+- 用户全局信息 PVPGlobal.userInfo 增加 countryCode 字段，标示国家代号,例如中国是“CN”，美国是“US”，如果没有国家信息，返回“UNKONW”
+- 增加了 PVPGlobal.isInLobby 、 PVPGlobal.isInRoom、 PVPGlobal.connectedToGameServer 三个静态成员变量
+- 全面增加了注释
+
+V0.1.3-P1  2015-10-26
+
+- 修复进入大厅sdk Bug
+
+V0.1.3  2015-10-25
+
+- 重构对外接口
+
+V0.1.2  2015-10-22
+
+- 新增获取用户应用内信息接口 PVP.cleint.AppUserGetUserInfo ， 以及委托实例 PVP.cleint.appUserGetUserInfoResponseHandler
+- 新增修改用户在应用内信息接口 PVP.client.UpdateAppUserInfo ，以及委托实例 PVP.client.appUserUpdateInfoResponseHandler
+- 新增修改用户在应用内信息接口 PVP.client.UpdateAppUserCustomData ，以及委托实例 PVP.client.appUserUpdateCustomDataResponseHandler
+
+
+V0.1.1  2015-10-14
+
+- sdk 的入口类 class PVP 增加 PVP.userInfo, PVP.localAppUserInfo，PVP.appUserInfos, PVP.lobbyInfo, PVP.roomInfo 静态成员变量
+- PVP.client 实例成员方法增加参数，float timeout ,默认是5 秒。服务器超时响应，sdk 会触发超时事件
+
+V0.1.0 2015-10-10
+
+- 网络层管理
+- 完成初版
